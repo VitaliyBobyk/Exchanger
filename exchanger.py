@@ -12,17 +12,29 @@ PAGE = requests.get('https://api.privatbank.ua/p24api/pubinfo?json&exchange&cour
 
 
 class Data:
+    def check(self):
+        ent_value = ent_string.get()
+        for i in ent_value:
+            if i.isdigit():
+                continue
+            else:
+                test = ent_value.replace(i, "")
+                ent_string.set(test.replace(i, ""))
+
     def currency(self):
         try:
             want_combo_value = combobox_want.get()
-            test = float(ent_string.get())
-            for i in PAGE:
-                if want_combo_value == i['ccy']:
-                    count = test * float(i['sale'])
-                    result_string.set('You should pay: ' + str(("%.1f" % count)) + ' HRN')
+            if ent_string.get() == "":
+                result_string.set("")
+            else:
+                for i in PAGE:
+                    if want_combo_value == i['ccy']:
+                        count = float(float(ent_string.get()) * float(i['sale']))
+                        result_string.set('You should pay: ' + str(("%.1f" % count)) + ' HRN')
         except ValueError:
-            result_string.set('Something went wrong!')
-    def livereload(self,event):
+            r.check()
+
+    def livereload(self, event):
         r.currency()
 
 
@@ -44,7 +56,5 @@ ent.place(x=0, y=35)
 ent.bind('<KeyRelease>', r.livereload)
 result = Entry(root, text='You should pay: ', width=30, bg='white', textvariable=result_string, state='readonly')
 result.place(x=4, y=80)
-# res = Button(root, width=15, text='Calculate', command=lambda: r.currency())
-# res.place(x=70, y=120)
 
 root.mainloop()
