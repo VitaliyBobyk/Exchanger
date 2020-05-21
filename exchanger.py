@@ -15,13 +15,15 @@ class Data:
     def currency(self):
         try:
             want_combo_value = combobox_want.get()
-            ent_float = float(ent_string.get())
+            test = float(ent_string.get())
             for i in PAGE:
                 if want_combo_value == i['ccy']:
-                    sale = float(i['sale'])
-                    result_string.set('You should pay: ' + str(ent_float * sale) + ' HRN')
+                    count = test * float(i['sale'])
+                    result_string.set('You should pay: ' + str(("%.1f" % count)) + ' HRN')
         except ValueError:
             result_string.set('Something went wrong!')
+    def livereload(self,event):
+        r.currency()
 
 
 r = Data()
@@ -39,9 +41,10 @@ combobox_want.place(x=140, y=35)
 combobox_want.current(0)
 ent = Entry(root, width=14, bg='white', textvariable=ent_string)
 ent.place(x=0, y=35)
-result = Entry(root, text='You should pay: ', width=30, bg='white', textvariable=result_string)
+ent.bind('<KeyRelease>', r.livereload)
+result = Entry(root, text='You should pay: ', width=30, bg='white', textvariable=result_string, state='readonly')
 result.place(x=4, y=80)
-res = Button(root, width=15, text='Calculate', command=lambda: r.currency())
-res.place(x=70, y=120)
+# res = Button(root, width=15, text='Calculate', command=lambda: r.currency())
+# res.place(x=70, y=120)
 
 root.mainloop()
